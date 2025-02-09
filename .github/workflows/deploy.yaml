@@ -26,6 +26,8 @@ jobs:
         run: |
           cat secret.env
           echo ${{ env.MTX_GITHUB }}
+          KEY_VALUE=$(echo "$MTX_GITHUB" | jq -r '.toto')
+          echo "La valeur de toto est : $KEY_VALUE"
       - name: Checkout code
         uses: actions/checkout@v3
 #      - name: Set variables for push
