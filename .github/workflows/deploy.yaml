@@ -16,12 +16,12 @@ jobs:
       - uses: scaleway/action-scw-secret@v0
         with:
           secret-names: |
-            /mediamtx/mtx_github
+            /mediamtx/mtx-github
           access-key: ${{ secrets.SCW_ACCESS_KEY }}
           secret-key: ${{ secrets.SCW_SECRET_KEY }}
           default-project-id: ${{ secrets.SCW_DEFAULT_PROJECT_ID }}
           default-organization-id: ${{ secrets.SCW_DEFAULT_ORGANIZATION_ID }}
-      - run: echo "Successfully retrieve 'my-github-secret' with value $MY_GITHUB_SECRET"
+      - run: echo "Successfully retrieve 'mtx-github' with value $MTX_GITHUB"
       - name: Checkout code
         uses: actions/checkout@v3
 #      - name: Set variables for push
