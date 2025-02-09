@@ -21,7 +21,10 @@ jobs:
           secret-key: ${{ secrets.SCW_SECRET_KEY }}
           default-project-id: ${{ secrets.SCW_DEFAULT_PROJECT_ID }}
           default-organization-id: ${{ secrets.SCW_DEFAULT_ORGANIZATION_ID }}
-      - run: echo "Successfully retrieve 'mtx-github' with value $MTX_GITHUB"
+      - run: echo "MTX_SCALEWAY=$MTX_GITHUB" > secret.env
+      - name: Display variables
+        run: |
+          cat secret.env
       - name: Checkout code
         uses: actions/checkout@v3
 #      - name: Set variables for push
