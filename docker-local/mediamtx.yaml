@@ -72,9 +72,9 @@ authInternalUsers:
   # Default administrator.
   # This allows to use API, metrics and PPROF without authentication,
   # if the IP is localhost.
-- user: any
-  pass:
-  ips: ['127.0.0.1', '::1']
+- user: admin
+  pass: admin
+  ips: []
   permissions:
   - action: api
   - action: metrics
@@ -128,7 +128,7 @@ authJWTClaimKey: mediamtx_permissions
 # Global settings -> Control API
 
 # Enable controlling the server through the Control API.
-api: no
+api: yes
 # Address of the Control API listener.
 apiAddress: :9997
 # Enable TLS/HTTPS on the Control API server.
@@ -704,4 +704,5 @@ paths:
 
   # Settings under path "all_others" are applied to all paths that
   # do not match another entry.
-  all_others:
+  mystream:
+    source: publisher

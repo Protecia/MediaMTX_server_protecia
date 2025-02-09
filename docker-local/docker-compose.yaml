@@ -1,11 +1,10 @@
-version: '3.8'
 services:
   mediamtx:
     image: bluenviron/mediamtx:latest
     container_name: mediamtx
     environment:
       - MTX_RTSPTRANSPORTS=tcp
-      - MTX_WEBRTCADDITIONALHOSTS=192.168.x.x
+      - MTX_WEBRTCADDITIONALHOSTS=<public ip adress>>
     ports:
       - "8554:8554"       # RTSP
       - "1935:1935"       # RTMP
@@ -13,4 +12,7 @@ services:
       - "8889:8889"       # HTTPS (HLS, API, etc.)
       - "8890:8890/udp"   # WebRTC (UDP)
       - "8189:8189/udp"   # SRT (UDP)
+      - "9997:9997"
+    volumes:
+      - ./mediamtx.yaml:/mediamtx.yml
 #    restart: unless-stopped
