@@ -16,7 +16,7 @@ jobs:
       - uses: scaleway/action-scw-secret@v0
         with:
           secret-names: |
-            mediamtx/mtx_github
+            secret-nervous-pare
           access-key: ${{ secrets.SCW_ACCESS_KEY }}
           secret-key: ${{ secrets.SCW_SECRET_KEY }}
           default-project-id: ${{ secrets.SCW_DEFAULT_PROJECT_ID }}
