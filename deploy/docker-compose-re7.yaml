@@ -19,6 +19,8 @@ services:
 #      - "traefik.http.routers.django-protecia.tls=true"
 #      - "traefik.http.routers.django-protecia.tls.certresolver=myresolver"
 #      - "traefik.http.middlewares.vitrineHeader.headers.customrequestheaders.HTTP_X_FORWARDED_PROTO=https"
+    ports:
+      - "8554:8554"
     networks:
       compose_traefik_aratech_net:
         ipv4_address: 10.5.5.110
