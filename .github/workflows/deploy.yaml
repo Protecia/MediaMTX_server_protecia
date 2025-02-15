@@ -25,7 +25,9 @@ jobs:
         run: |
           IMAGE_TAG=$(echo "$MTX_GITHUB" | jq -r '.toto')
           echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
-          echo "La valeur de toto est : ${{ env.IMAGE_TAG }}"
+          echo "La valeur de toto est : $IMAGE_TAG"
+      - name: display env vars
+        run: echo "la valeur de toto est ${{ env.IMAGE_TAG }}"
       - name: Checkout code
         uses: actions/checkout@v3
 #      - name: Set variables for push
