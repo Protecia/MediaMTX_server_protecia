@@ -119,7 +119,7 @@ jobs:
           
           # Utilisation de la syntaxe multi-ligne pour SSH_MTX_KEY
           echo "SSH_MTX_KEY<<EOF" >> $GITHUB_ENV
-          echo "'$SSH_MTX_KEY'" >> $GITHUB_ENV
+          echo "$SSH_MTX_KEY" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
           echo "SSH_MTX_PORT=$SSH_MTX_PORT" >> $GITHUB_ENV
           
