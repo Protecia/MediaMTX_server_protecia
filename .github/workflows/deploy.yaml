@@ -113,6 +113,7 @@ jobs:
       - name: Set secrets from secret-github.env
         id: set-secrets-github
         run: |
+          cat secret-github.env
           source secret-github.env
           echo "::add-mask::$SSH_MTX_HOST"
           echo "::add-mask::$SSH_MTX_USER"
