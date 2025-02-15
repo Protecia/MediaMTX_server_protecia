@@ -21,13 +21,11 @@ jobs:
           secret-key: ${{ secrets.SCW_SECRET_KEY }}
           default-project-id: ${{ secrets.SCW_DEFAULT_PROJECT_ID }}
           default-organization-id: ${{ secrets.SCW_DEFAULT_ORGANIZATION_ID }}
-      - run: echo "MTX_SCALEWAY=$MTX_GITHUB" > secret.env
       - name: Display variables
         run: |
-          cat secret.env
-          echo ${{ env.MTX_GITHUB }}
-          KEY_VALUE=$(echo "$MTX_GITHUB" | jq -r '.toto')
-          echo "La valeur de toto est : $KEY_VALUE"
+          IMAGE_TAG=$(echo "$MTX_GITHUB" | jq -r '.toto')
+          echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
+          echo "La valeur de toto est : ${{ env.IMAGE_TAG }}"
       - name: Checkout code
         uses: actions/checkout@v3
 #      - name: Set variables for push
