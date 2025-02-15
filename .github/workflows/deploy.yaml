@@ -150,7 +150,6 @@ jobs:
             ./deploy/start_remote.sh,
             ./deploy/mediamtx.yaml
           target: /home/mediamtx/
-          recursive: true
           port: ${{ env.SSH_MTX_PORT }}
           overwrite: true
 
