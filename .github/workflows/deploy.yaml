@@ -34,7 +34,7 @@ jobs:
           SSH_MTX_HOST=$(echo "$MTX_GITHUB" | jq -r '.SSH_MTX_HOST')
           SSH_MTX_USER=$(echo "$MTX_GITHUB" | jq -r '.SSH_MTX_USER')
           echo "MTX_ADMIN_PASS_RE7=$MTX_ADMIN_PASS_RE7" > secret.env
-          echo "DOCKER_HUB_USER=$DOCKER_HUB_USER" > secre-github.env
+          echo "DOCKER_HUB_USER=$DOCKER_HUB_USER" > secret-github.env
           echo "DOCKER_HUB_TOKEN=$DOCKER_HUB_TOKEN" >> secret-github.env
           echo "SSH_MTX_USER=$SSH_MTX_USER" >> secret-github.env
           echo "SSH_MTX_HOST=$SSH_MTX_HOST" >> secret-github.env
