@@ -1,7 +1,7 @@
 services:
 
   mediamtx:
-    image: bluenviron/mediamtx:1.11.3
+    image: rg.fr-par.scw.cloud/protecia/mediamtx:${IMAGE_TAG}
     container_name: mediamtx
     environment:
       - MTX_RTSPTRANSPORTS=tcp
