@@ -149,6 +149,8 @@ jobs:
             ./${{ env.VERSION_FILE }},
             ./${{ env.SECRET_FILE }},
             ./deploy/start_remote.sh,
+            ./deploy/start_remote_no_daemon.sh,
+            ./deploy/stop_remote.sh,
             ./deploy/mediamtx.yaml
           target: /home/mediamtx/
           port: ${{ env.SSH_MTX_PORT }}
@@ -165,4 +167,4 @@ jobs:
             source ${{ env.VERSION_FILE }}
             cat ${{ env.SECRET_FILE }} ${{ env.VERSION_FILE }} > combined-$DEPLOY_ENV.env
             cd deploy
-#            bash start_remote.sh $DEPLOY_ENV
+            bash start_remote.sh $DEPLOY_ENV

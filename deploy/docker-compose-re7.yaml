@@ -8,17 +8,13 @@ services:
       - MTX_WEBRTCADDITIONALHOSTS=mtx.protecia.net
     volumes:
       - /home/mediamtx/deploy/mediamtx.yaml:/mediamtx.yml
-#    labels:
-#      - "traefik.http.services.django-protecia.loadbalancer.server.port=80"
-#      - "traefik.http.routers.django-protecia_http.entrypoints=web"
-#      - "traefik.http.routers.django-protecia_http.rule=Host(`dev.protecia.com`)"
-#      - "traefik.http.routers.django-protecia_http.middlewares=protecia_https"
-#      - "traefik.http.middlewares.protecia_https.redirectscheme.scheme=https"
-#      - "traefik.http.routers.django-protecia.entrypoints=websecure"
-#      - "traefik.http.routers.django-protecia.rule=Host(`dev.protecia.com`)"
-#      - "traefik.http.routers.django-protecia.tls=true"
-#      - "traefik.http.routers.django-protecia.tls.certresolver=myresolver"
-#      - "traefik.http.middlewares.vitrineHeader.headers.customrequestheaders.HTTP_X_FORWARDED_PROTO=https"
+    labels:
+      - "traefik.http.services.mediamtx.loadbalancer.server.port=8889"
+      - "traefik.http.routers.mediamtx.entrypoints=webrtc"
+      - "traefik.http.routers.mediamtx.tls=true"
+      - "traefik.http.routers.mediamtx.tls.certresolver=myresolver"
+      - "traefik.http.routers.mediamtx.rule=Host(`mtx.protecia.net`)"
+      - "traefik.docker.network=compose_traefik_aratech_net"
     ports:
       - "8554:8554"       # RTSP
       - "8889:8889"       # WEB RTC
