@@ -30,7 +30,10 @@ jobs:
           echo "DOCKER_HUB_USER=$DOCKER_HUB_USER" >> $GITHUB_ENV
           echo "DOCKER_HUB_TOKEN=$DOCKER_HUB_TOKEN" >> $GITHUB_ENV
       - name: display env vars
-        run: echo "la valeur de MTX_ADMIN_PASS_RE7 est ${{ env.MTX_ADMIN_PASS_RE7 }}"
+        run: |
+           echo "la valeur de MTX_ADMIN_PASS_RE7 est ${{ env.MTX_ADMIN_PASS_RE7 }}"
+           echo "la valeur de DOCKER_HUB_USER est ${{ env.DOCKER_HUB_USER }}"
+           echo "la valeur de DOCKER_HUB_TOKEN est ${{ env.DOCKER_HUB_TOKEN }}"
       - name: Checkout code
         uses: actions/checkout@v3
       - name: Set variables for push
