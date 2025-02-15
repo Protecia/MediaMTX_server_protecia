@@ -116,11 +116,20 @@ jobs:
           source secret-github.env
           echo "SSH_MTX_HOST=$SSH_MTX_HOST" >> $GITHUB_ENV
           echo "SSH_MTX_USER=$SSH_MTX_USER" >> $GITHUB_ENV
+          
           # Utilisation de la syntaxe multi-ligne pour SSH_MTX_KEY
           echo "SSH_MTX_KEY<<EOF" >> $GITHUB_ENV
           echo "$SSH_MTX_KEY" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
           echo "SSH_MTX_PORT=$SSH_MTX_PORT" >> $GITHUB_ENV
+          
+          # Masquer les secrets dans les logs
+          echo "::add-mask::$SSH_MTX_HOST"
+          echo "::add-mask::$SSH_MTX_USER"
+          echo "::add-mask::$SSH_MTX_PORT"
+          while IFS= read -r line; do
+            echo "::add-mask::$line"
+          done <<< "$SSH_MTX_KEY"
 
       - name: Display variables
         run: |
@@ -128,12 +137,7 @@ jobs:
           mv version.env ${{ env.VERSION_FILE }}
           mv secret.env ${{ env.SECRET_FILE }}
 
-#          echo "::add-mask::$SSH_MTX_HOST"
-#          echo "::add-mask::$SSH_MTX_USER"
-#          echo "::add-mask::$SSH_MTX_PORT"
-#          while IFS= read -r line; do
-#            echo "::add-mask::$line"
-#          done <<< "$SSH_MTX_KEY"
+
 
 #      - name: Copy files to server
 #        uses: appleboy/scp-action@v0.1.7
