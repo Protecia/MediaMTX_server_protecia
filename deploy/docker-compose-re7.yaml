@@ -7,7 +7,7 @@ services:
       - MTX_RTSPTRANSPORTS=tcp
       - MTX_WEBRTCADDITIONALHOSTS=mtx.protecia.net
     volumes:
-      - /home/mediamtx/mediamtx.yaml:/mediamtx.yml
+      - /home/mediamtx/deploy/mediamtx.yaml:/mediamtx.yml
 #    labels:
 #      - "traefik.http.services.django-protecia.loadbalancer.server.port=80"
 #      - "traefik.http.routers.django-protecia_http.entrypoints=web"
