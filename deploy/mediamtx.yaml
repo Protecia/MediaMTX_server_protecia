@@ -72,9 +72,9 @@ authInternalUsers:
   # Default administrator.
   # This allows to use API, metrics and PPROF without authentication,
   # if the IP is localhost.
-- user: admin
-  pass: admin
-  ips: []
+- user: any
+  pass:
+  ips: ['127.0.0.1', '::1']
   permissions:
   - action: api
   - action: metrics
@@ -705,4 +705,3 @@ paths:
   # Settings under path "all_others" are applied to all paths that
   # do not match another entry.
   protecia:
-    source: publisher
