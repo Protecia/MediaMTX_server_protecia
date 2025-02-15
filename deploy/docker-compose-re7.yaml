@@ -17,7 +17,6 @@ services:
       - "traefik.docker.network=compose_traefik_aratech_net"
     ports:
       - "8554:8554"       # RTSP
-      - "8889:8889"       # WEB RTC
       - "8189:8189/udp"   # WEB RTC
     networks:
       compose_traefik_aratech_net:
