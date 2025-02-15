@@ -76,9 +76,9 @@ jobs:
           username: ${{ env.DOCKER_HUB_USER }}
           password: ${{ env.DOCKER_HUB_TOKEN }}
       - name: Build Docker image
-        run: docker build -f deploy/Dockerfile -t roboticia/nnvision_server:${{ env.IMAGE_TAG }} .
+        run: docker build -f deploy/Dockerfile -t roboticia/mediamtx:${{ env.IMAGE_TAG }} .
       - name: Push Docker image
-        run: docker push roboticia/nnvision_server:${{ env.IMAGE_TAG }}
+        run: docker push roboticia/mediamtx:${{ env.IMAGE_TAG }}
 
 #  deploy:
 #    runs-on: ubuntu-latest
