@@ -149,7 +149,7 @@ jobs:
             ./${{ env.VERSION_FILE }},
             ./${{ env.SECRET_FILE }},
             ./deploy/start_remote.sh,
-            ./deploy/mediamtx.yml
+            ./deploy/mediamtx.yaml
           target: /home/mediamtx/
           port: ${{ env.SSH_MTX_PORT }}
           overwrite: true
