@@ -19,7 +19,6 @@ jobs:
         with:
           secret-names: |
             /mediamtx/mtx-github
-            /mediamtx/ssh-key
           access-key: ${{ secrets.SCW_ACCESS_KEY }}
           secret-key: ${{ secrets.SCW_SECRET_KEY }}
           default-project-id: ${{ secrets.SCW_DEFAULT_PROJECT_ID }}
@@ -29,7 +28,7 @@ jobs:
           MTX_ADMIN_PASS_RE7=$(echo "$MTX_GITHUB" | jq -r '.MTX_ADMIN_PASS_RE7')
           DOCKER_HUB_USER=$(echo "$MTX_GITHUB" | jq -r '.DOCKER_HUB_USER')
           DOCKER_HUB_TOKEN=$(echo "$MTX_GITHUB" | jq -r '.DOCKER_HUB_TOKEN')
-          SSH_MTX_KEY=$(echo "$SSH_KEY" | jq -r '.ssh_private_key')
+          SSH_MTX_KEY=$(echo "$MTX_GITHUB" | jq -r '.SSH_MTX_KEY')
           SSH_MTX_PORT=$(echo "$MTX_GITHUB" | jq -r '.SSH_MTX_PORT')
           SSH_MTX_HOST=$(echo "$MTX_GITHUB" | jq -r '.SSH_MTX_HOST')
           SSH_MTX_USER=$(echo "$MTX_GITHUB" | jq -r '.SSH_MTX_USER')
