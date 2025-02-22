@@ -9,6 +9,13 @@ services:
     volumes:
       - /home/mediamtx/deploy/mediamtx.yaml:/mediamtx.yml
     labels:
+      # RTSP
+      - "traefik.tcp.services.mediamtx-rtsp.loadbalancer.server.port=8554"
+      - "traefik.tcp.routers.mediamtx-rtsp.rule=HostSNI(`*`)"
+      - "traefik.tcp.routers.mediamtx-rtsp.entrypoints=rtsp"
+      - "traefik.tcp.routers.mediamtx-rtsp.tls=true"
+      - "traefik.tcp.routers.mediamtx-rtsp.tls.certresolver=myresolver"
+      # WEBRTC
       - "traefik.http.services.mediamtx.loadbalancer.server.port=8889"
       - "traefik.http.routers.mediamtx.entrypoints=webrtc"
       - "traefik.http.routers.mediamtx.tls=true"
