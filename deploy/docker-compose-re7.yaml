@@ -13,8 +13,8 @@ services:
       - "traefik.tcp.services.mediamtx-rtsp.loadbalancer.server.port=8554"
       - "traefik.tcp.routers.mediamtx-rtsp.rule=HostSNI(`*`)"
       - "traefik.tcp.routers.mediamtx-rtsp.entrypoints=rtsp"
-      #- "traefik.tcp.routers.mediamtx-rtsp.tls=true"
-      #- "traefik.tcp.routers.mediamtx-rtsp.tls.certresolver=myresolver"
+      - "traefik.tcp.routers.mediamtx-rtsp.tls=true"
+      - "traefik.tcp.routers.mediamtx-rtsp.tls.certresolver=myresolver"
       # WEBRTC
       - "traefik.http.services.mediamtx.loadbalancer.server.port=8889"
       - "traefik.http.routers.mediamtx.entrypoints=webrtc"
