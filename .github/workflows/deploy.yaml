@@ -106,7 +106,7 @@ jobs:
         uses: scaleway/action-scw-secret@v0
         with:
           secret-names: |
-            /protecia-server/server-connect
+            /protecia-server/secret-connect
             /protecia-server/${{ env.SSH_KEY_SECRET }}
           access-key: ${{ secrets.SCW_ACCESS_KEY }}
           secret-key: ${{ secrets.SCW_SECRET_KEY }}
