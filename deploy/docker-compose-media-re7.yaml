@@ -8,7 +8,7 @@ services:
       - MTX_RTSPTRANSPORTS=tcp
       - MTX_WEBRTCADDITIONALHOSTS=mtx-re7.protecia.net
     volumes:
-      - /home/mediamtx/deploy/mediamtx-re7.yaml:/mediamtx.yml
+      - /home/protecia/deploy/mediamtx-re7.yaml:/mediamtx.yml
     labels:
       # RTSP
       - "traefik.tcp.services.mediamtx-rtsp.loadbalancer.server.port=8554"

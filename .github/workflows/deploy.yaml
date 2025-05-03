@@ -160,8 +160,8 @@ jobs:
           key_path: ./ssh_key
           port: ${{ env.SSH_PORT }}
           script: |
-            docker login rg.fr-par.scw.cloud/protecia -u nologin --password ${{ secrets.SCW_SECRET_KEY }}
+            docker login rg.fr-par.scw.cloud/protecia -u nologin --password-stdin <<< ${{ secrets.SCW_SECRET_KEY }}
             source ${{ env.VERSION_FILE }}
-            cat ${{ env.SECRET_FILE }} ${{ env.VERSION_FILE }} > combined-$DEPLOY_ENV.env
+            cat ${{ env.SECRET_FILE }} ${{ env.VERSION_FILE }} > combined-media-$DEPLOY_ENV.env
             cd deploy
             bash start_remote_media.sh $DEPLOY_ENV
