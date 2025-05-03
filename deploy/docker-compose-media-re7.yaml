@@ -1,13 +1,13 @@
 services:
 
-  mediamtx:
+  mediamtx-re7:
     image: rg.fr-par.scw.cloud/protecia/mediamtx:${IMAGE_TAG}
-    container_name: mediamtx
+    container_name: mediamtx-re7
     environment:
       - MTX_RTSPTRANSPORTS=tcp
-      - MTX_WEBRTCADDITIONALHOSTS=mtx.protecia.net
+      - MTX_WEBRTCADDITIONALHOSTS=mtx-re7.protecia.net
     volumes:
-      - /home/mediamtx/deploy/mediamtx.yaml:/mediamtx.yml
+      - /home/mediamtx/deploy/mediamtx-re7.yaml:/mediamtx.yml
     labels:
       # RTSP
       - "traefik.tcp.services.mediamtx-rtsp.loadbalancer.server.port=8554"
@@ -20,15 +20,14 @@ services:
       - "traefik.http.routers.mediamtx.entrypoints=webrtc"
       - "traefik.http.routers.mediamtx.tls=true"
       - "traefik.http.routers.mediamtx.tls.certresolver=myresolver"
-      - "traefik.http.routers.mediamtx.rule=Host(`mtx.protecia.net`)"
-      - "traefik.docker.network=compose_traefik_aratech_net"
+      - "traefik.http.routers.mediamtx.rule=Host(`mtx-re7.protecia.net`)"
+      - "traefik.docker.network=network_protecia_re7"
     ports:
       - "8554:8554"       # RTSP
       - "8189:8189/udp"   # WEB RTC
     networks:
-      compose_traefik_aratech_net:
-        ipv4_address: 10.5.5.110
+      network_protecia_re7:
 
 networks:
-  compose_traefik_aratech_net:
+  network_protecia_re7:
     external: true

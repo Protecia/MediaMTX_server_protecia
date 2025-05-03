@@ -11,7 +11,7 @@ on:
 
 jobs:
   check_files_changed:
-    name: "Check if deploy folder have changes"
+    name: "Check changes"
     runs-on: ubuntu-latest
     # Declare outputs for next jobs
     outputs:
@@ -21,7 +21,6 @@ jobs:
         with:
           # Checkout as many commits as needed for the diff
           fetch-depth: 0
-
       - name: Check if any file in deploy directory has changed
         id: changed-files-specific
         uses: tj-actions/changed-files@v34
@@ -30,37 +29,13 @@ jobs:
             deploy/** 
 
   prepare:
+    name: "Prepare code"
     runs-on: ubuntu-latest
     needs: check_files_changed
-    if: needs.check_files_changed.outputs.deploy_changed == 'True'
+    if: needs.check_files_changed.outputs.deploy_changed == 'true' && github.event_name != 'release' || github.event_name == 'release'
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-      - uses: scaleway/action-scw-secret@v0
-        with:
-          secret-names: |
-            /mediamtx/mtx-github
-            /mediamtx/ssh-key
-          access-key: ${{ secrets.SCW_ACCESS_KEY }}
-          secret-key: ${{ secrets.SCW_SECRET_KEY }}
-          default-project-id: ${{ secrets.SCW_DEFAULT_PROJECT_ID }}
-          default-organization-id: ${{ secrets.SCW_DEFAULT_ORGANIZATION_ID }}
-      - name: Set secrets variables
-        run: |
-          MTX_ADMIN_PASS_RE7=$(echo "$MTX_GITHUB" | jq -r '.MTX_ADMIN_PASS_RE7')
-          DOCKER_HUB_USER=$(echo "$MTX_GITHUB" | jq -r '.DOCKER_HUB_USER')
-          DOCKER_HUB_TOKEN=$(echo "$MTX_GITHUB" | jq -r '.DOCKER_HUB_TOKEN')
-          SSH_MTX_KEY=$(echo "$SSH_KEY" | jq -r '.ssh_private_key')
-          SSH_MTX_PORT=$(echo "$MTX_GITHUB" | jq -r '.SSH_MTX_PORT')
-          SSH_MTX_HOST=$(echo "$MTX_GITHUB" | jq -r '.SSH_MTX_HOST')
-          SSH_MTX_USER=$(echo "$MTX_GITHUB" | jq -r '.SSH_MTX_USER')
-          echo "MTX_ADMIN_PASS_RE7=$MTX_ADMIN_PASS_RE7" > secret.env
-          echo "DOCKER_HUB_USER=$DOCKER_HUB_USER" > secret-github.env
-          echo "DOCKER_HUB_TOKEN=$DOCKER_HUB_TOKEN" >> secret-github.env
-          echo "SSH_MTX_USER=$SSH_MTX_USER" >> secret-github.env
-          echo "SSH_MTX_HOST=$SSH_MTX_HOST" >> secret-github.env
-          echo "SSH_MTX_PORT=$SSH_MTX_PORT" >> secret-github.env
-          echo "SSH_MTX_KEY='$SSH_MTX_KEY'" >> secret-github.env
       - name: Set variables for push
         if: github.event_name == 'push'
         run: |
@@ -80,12 +55,13 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: code
-          path: .
+          path: |
+            .
 
   build-and-push:
-    runs-on: ubuntu-latest
+    name: "Make Docker images"
     needs: prepare
-    if: needs.check_files_changed.outputs.deploy_changed == 'True'
+    runs-on: ubuntu-latest
     steps:
       - name: Download code artifact
         uses: actions/download-artifact@v4
@@ -97,18 +73,10 @@ jobs:
         run: |
           source version.env
           echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_ENV
-      - name: Set secrets from secret.env
-        id: set-secrets-github
-        run: |
-          source secret-github.env
-          echo "::add-mask::$DOCKER_HUB_USER"
-          echo "::add-mask::$DOCKER_HUB_TOKEN"
-          echo "DOCKER_HUB_USER=$DOCKER_HUB_USER" >> $GITHUB_ENV
-          echo "DOCKER_HUB_TOKEN=$DOCKER_HUB_TOKEN" >> $GITHUB_ENV
       - name: Login to Scaleway container Registry
         uses: docker/login-action@v2
         with:
-          registry: rg.fr-par.scw.cloud
+          registry: rg.nl-ams.scw.cloud
           username: nologin
           password: ${{ secrets.SCW_SECRET_KEY }}
       - name: Build Docker image
@@ -117,76 +85,82 @@ jobs:
         run: docker push rg.fr-par.scw.cloud/protecia/mediamtx:${{ env.IMAGE_TAG }}
 
   deploy:
+    name: "Deploy on OVH"
     runs-on: ubuntu-latest
     needs: build-and-push
-    if: needs.check_files_changed.outputs.deploy_changed == 'True'
     steps:
       - name: Download code artifact
         uses: actions/download-artifact@v4
         with:
           name: code
           path: .
-
-      - name: Set version file
-        id: version-file
+      - name: Set vars from version.env
         run: |
           source version.env
-          echo "VERSION_FILE=version_${DEPLOY_ENV}.env" >> $GITHUB_ENV
-          echo "SECRET_FILE=secret_${DEPLOY_ENV}.env" >> $GITHUB_ENV
-
-      - name: Set secrets from secret-github.env
-        id: set-secrets-github
+          echo "SSH_KEY_SECRET=ssh-key-${DEPLOY_ENV}" >> $GITHUB_ENV
+          echo "VERSION_FILE=version-media-${DEPLOY_ENV}.env" >> $GITHUB_ENV
+          echo "SECRET_FILE=secret-media-${DEPLOY_ENV}.env" >> $GITHUB_ENV
+          echo "COMPOSE_FILE=docker-compose-media-${DEPLOY_ENV}.yaml" >> $GITHUB_ENV
+          echo "MTX_CONF_FILE=mediamtx-${DEPLOY_ENV}.yaml" >> $GITHUB_ENV
+      - name: Get scaleways secrets using scaleways credential
+        uses: scaleway/action-scw-secret@v0
+        with:
+          secret-names: |
+            /protecia-server/server-connect
+            /protecia-server/${{ env.SSH_KEY_SECRET }}
+          access-key: ${{ secrets.SCW_ACCESS_KEY }}
+          secret-key: ${{ secrets.SCW_SECRET_KEY }}
+          default-project-id: ${{ secrets.SCW_DEFAULT_PROJECT_ID }}
+          default-organization-id: ${{ secrets.SCW_DEFAULT_ORGANIZATION_ID }}
+      - name: Set vars from scaleway
         run: |
-          source secret-github.env
-          echo "SSH_MTX_HOST=$SSH_MTX_HOST" >> $GITHUB_ENV
-          echo "SSH_MTX_USER=$SSH_MTX_USER" >> $GITHUB_ENV
-          
-          # Utilisation de la syntaxe multi-ligne pour SSH_MTX_KEY
-          echo "SSH_MTX_KEY<<EOF" >> $GITHUB_ENV
-          echo "$SSH_MTX_KEY" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
-          echo "SSH_MTX_PORT=$SSH_MTX_PORT" >> $GITHUB_ENV
-          
-          # Masquer les secrets dans les logs
-          echo "::add-mask::$SSH_MTX_HOST"
-          echo "::add-mask::$SSH_MTX_USER"
-          echo "::add-mask::$SSH_MTX_PORT"
-          while IFS= read -r line; do
-            echo "::add-mask::$line"
-          done <<< "$SSH_MTX_KEY"
-
-      - name: Display variables
+          source version.env
+          # Get ssh parameters from scaleway secrets
+          SSH_HOST=$(echo "$SECRET_CONNECT" | jq -r ".SSH_HOST_${DEPLOY_ENV^^}")
+          SSH_USER=$(echo "$SECRET_CONNECT" | jq -r ".SSH_USER_${DEPLOY_ENV^^}")
+          SSH_PORT=$(echo "$SECRET_CONNECT" | jq -r ".SSH_PORT_${DEPLOY_ENV^^}")
+          declare -n SSH_KEY_JSON="SSH_KEY_${DEPLOY_ENV^^}"
+          SSH_KEY=$(echo "$SSH_KEY_JSON" | jq -r ".ssh_private_key")
+          # export variables to be used in next steps
+          echo "SSH_HOST=$SSH_HOST" >> $GITHUB_ENV
+          echo "SSH_USER=$SSH_USER" >> $GITHUB_ENV
+          echo "SSH_PORT=$SSH_PORT" >> $GITHUB_ENV
+          echo "$SSH_KEY" > ssh_key
+      - name: Set specific secret for project in ${{ env.SECRET_FILE }}
         run: |
-          echo "${{ env.VERSION_FILE }}"
-          mv version.env ${{ env.VERSION_FILE }}
-          mv secret.env ${{ env.SECRET_FILE }}
-
+          source version.env
+          cp version.env ${{ env.VERSION_FILE }}
+          # Get secret parameters from scaleway secrets
+          MTX_ADMIN_PASS=$(jq -r ".MTX_ADMIN_PASS_${DEPLOY_ENV^^}" <<<"$SECRET_CONNECT")
+          # export variables to file
+          echo "MTX_ADMIN_PASS=$MTX_ADMIN_PASS" > ${{ env.SECRET_FILE }}
       - name: Copy files to server
         uses: appleboy/scp-action@v0.1.7
         with:
-          host: ${{ env.SSH_MTX_HOST }}
-          username: ${{ env.SSH_MTX_USER }}
-          key: ${{ env.SSH_MTX_KEY }}
+          host: ${{ env.SSH_HOST }}
+          username: ${{ env.SSH_USER }}
+          key_path: ./ssh_key
           source: >
-            ./deploy/docker-compose-re7.yaml,
+            ./deploy/${{ env.COMPOSE_FILE }},
             ./${{ env.VERSION_FILE }},
             ./${{ env.SECRET_FILE }},
-            ./deploy/start_remote.sh,
-            ./deploy/start_remote_no_daemon.sh,
-            ./deploy/stop_remote.sh,
-            ./deploy/mediamtx.yaml
-          target: /home/mediamtx/
-          port: ${{ env.SSH_MTX_PORT }}
+            ./deploy/start_remote_media.sh,
+            ./deploy/start_remote_media_no_daemon.sh,
+            ./deploy/stop_remote_media.sh,
+            ./deploy/${{ env.MTX_CONF_FILE }}
+          target: /home/protecia/
+          port: ${{ env.SSH_PORT }}
           overwrite: true
 
       - name: Start docker compose
         uses: appleboy/ssh-action@v1.0.0
         with:
-          host: ${{ env.SSH_MTX_HOST }}
-          username: ${{ env.SSH_MTX_USER }}
-          key: ${{ env.SSH_MTX_KEY }}
-          port: ${{ env.SSH_MTX_PORT }}
+          host: ${{ env.SSH_HOST }}
+          username: ${{ env.SSH_USER }}
+          key_path: ./ssh_key
+          port: ${{ env.SSH_PORT }}
           script: |
+            docker login rg.fr-par.scw.cloud/protecia -u nologin --password ${{ secrets.SCW_SECRET_KEY }}
             source ${{ env.VERSION_FILE }}
             cat ${{ env.SECRET_FILE }} ${{ env.VERSION_FILE }} > combined-$DEPLOY_ENV.env
             cd deploy
