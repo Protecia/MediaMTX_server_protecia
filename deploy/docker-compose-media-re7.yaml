@@ -7,6 +7,7 @@ services:
     environment:
       - MTX_RTSPTRANSPORTS=tcp
       - MTX_WEBRTCADDITIONALHOSTS=mtx-re7.protecia.net
+      - MEDIA_MTX_API_PASS=${MTX_ADMIN_PASS}
     volumes:
       - /home/protecia/deploy/mediamtx-re7.yaml:/mediamtx.yml
     labels:

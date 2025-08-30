@@ -1,10 +1,14 @@
 services:
   mediamtx:
-    image: bluenviron/mediamtx:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+#    image: bluenviron/mediamtx:latest
     container_name: mediamtx
     environment:
       - MTX_RTSPTRANSPORTS=tcp
       - MTX_WEBRTCADDITIONALHOSTS=<public ip adress>>
+      - MEDIA_MTX_API_PASS=${MTX_ADMIN_PASS}
     ports:
       - "8554:8554"       # RTSP
       - "1935:1935"       # RTMP
@@ -14,5 +18,5 @@ services:
       - "8189:8189/udp"   # SRT (UDP)
       - "9997:9997"
     volumes:
-      - ./mediamtx.yaml:/mediamtx.yml
+      - ./mediamtx.yaml:/etc/mediamtx.yml
 #    restart: unless-stopped

@@ -73,7 +73,7 @@ authInternalUsers:
   # This allows to use API, metrics and PPROF without authentication,
   # if the IP is localhost.
 - user: mediamtx-api-django
-  pass: ${MTX_ADMIN_PASS}
+  pass: ${MEDIA_MTX_API_PASS}
   ips: []
   permissions:
   - action: api
