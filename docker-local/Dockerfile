@@ -5,4 +5,8 @@ RUN apk add --no-cache bash curl iputils
 COPY --from=mediamtx /mediamtx /usr/local/bin/mediamtx
 COPY --from=mediamtx /mediamtx.yml /etc/mediamtx.yml
 
-ENTRYPOINT ["/usr/local/bin/mediamtx", "/etc/mediamtx.yml"]
+# Entrypoint qui remplace le placeholder par la valeur d'env
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]

@@ -73,7 +73,7 @@ authInternalUsers:
   # This allows to use API, metrics and PPROF without authentication,
   # if the IP is localhost.
 - user: admin
-  pass: admin
+  pass: __API_PASS__
   ips: []
   permissions:
   - action: api
