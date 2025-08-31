@@ -1,8 +1,11 @@
-# Étape 1 : Utiliser Alpine pour installer des outils ou des dépendances
-FROM bluenviron/mediamtx:latest
+# Étape 1 : Utiliser Alpine pour rendre le script exécutable
+FROM alpine:latest AS builder
+WORKDIR /app
+COPY deploy/entrypoint.sh .
+RUN chmod +x entrypoint.sh
 
-# Entrypoint qui remplace le placeholder par la valeur d'env
-COPY deploy/entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+# Étape 2 : Utiliser l'image finale (minimaliste)
+FROM bluenviron/mediamtx:latest
+COPY --from=builder /app/entrypoint.sh /entrypoint.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
